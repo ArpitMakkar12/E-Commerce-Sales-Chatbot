@@ -8,7 +8,7 @@ interface LoginProps {
 
 export function Login({ onSwitchToRegister }: LoginProps) {
   const [email, setEmail] = useState('demo@example.com');
-  const [password, setPassword] = useState('password');
+  const [password, setPassword] = useState('ShopDemo#2026');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const { login, notice } = useAuth();
@@ -129,7 +129,7 @@ export function Login({ onSwitchToRegister }: LoginProps) {
             <p className="mb-2 text-sm font-medium text-blue-700">Demo Account:</p>
             <p className="text-xs text-blue-600">
               Email: demo@example.com<br />
-              Password: password
+              Password: ShopDemo#2026
             </p>
           </div>
         </form>

@@ -1,274 +1,138 @@
-# E-Commerce Sales Chatbot System
+# E-Commerce Sales Chatbot
 
-A comprehensive, production-ready e-commerce chatbot system built with React, TypeScript, and Node.js. This system provides an intelligent shopping assistant that helps customers discover products, compare prices, and make informed purchasing decisions.
+A shopping assistant chat app built with React, TypeScript, Node.js/Express and MongoDB. Customers sign in, ask for products in plain English ("laptops under $1500", "best rated books", "compare iPhone 15 Pro vs Galaxy S24") and get answers with product cards. Conversations are saved and can be reopened later.
 
-## 🚀 Features
+## Features
 
-### Frontend (React + TypeScript)
-- **Modern Chat Interface**: Beautiful, responsive chat UI with smooth animations
-- **User Authentication**: Secure JWT-based authentication system
-- **Product Discovery**: Interactive product cards with detailed information
-- **Conversation Management**: Save, load, and manage chat history
-- **Responsive Design**: Optimized for desktop, tablet, and mobile devices
-- **Real-time Interactions**: Typing indicators and smooth message transitions
+- **Sign up / sign in** with JWT tokens (7-day expiry) and bcrypt-hashed passwords. Expired sessions return you to the login screen with a notice.
+- **Chatbot that understands shopping questions** (no AI key needed):
+  - product types and synonyms ("headphones" finds earbuds and headsets, "phone" finds the iPhone and Galaxy)
+  - categories: Electronics, Books, Clothing, Home & Garden, Sports & Outdoors
+  - budgets: "under $50", "between $100 and $300", "around $80", "over 1k"
+  - sorting: "cheapest", "priciest", "best rated", "most popular"
+  - ratings and stock: "rated 4.5 stars", "in stock"
+  - product details: "tell me about the MacBook Pro", "how much is the iPhone 15 Pro?"
+  - comparisons: "compare MacBook vs Dell XPS"
+  - follow-ups that remember the previous answer: "show more", "cheaper", "more expensive", "under $30", "only wireless ones", "what about jeans?"
+  - gift ideas: "gift for my dad under $50"
+- **Optional LLM mode**: with a free Groq API key, an LLM writes friendlier answers. It can only choose from products our own search found, so it can't invent products or prices. If the LLM fails or is slow, the rule-based answer is used.
+- **Product cards** with rating, price, stock status, expandable features, save (heart) and add-to-cart feedback. Cards work on touch screens and show a category tile if a photo fails to load.
+- **Conversation history**: list, reopen and delete past chats.
+- **100 products** across 5 categories, with a few out of stock to show stock handling.
+- **Responsive** layout for phones, tablets and desktops.
 
-### Backend (Node.js + Express)
-- **RESTful API**: Comprehensive API for products, authentication, and chat
-- **Mock E-commerce Database**: 100+ products across multiple categories
-- **Intelligent Chat Bot**: Natural language processing for product queries
-- **Session Management**: Secure user sessions with JWT tokens
-- **Conversation Persistence**: Store and retrieve chat history
+## Tech stack
 
-### Key Capabilities
-- **Product Search**: Find products by name, category, or description
-- **Price Filtering**: Filter products by price range and budget
-- **Smart Recommendations**: AI-powered product suggestions
-- **Category Browsing**: Explore products by Electronics, Books, Clothing, etc.
-- **Inventory Management**: Real-time stock status and availability
+| Part | Tools |
+| --- | --- |
+| Frontend | React 18, TypeScript, Vite, Tailwind CSS, Lucide icons |
+| Backend | Node.js 22, Express 5, JSON Web Tokens, bcryptjs, express-rate-limit |
+| Database | MongoDB (Atlas free tier); falls back to an in-memory store when no database is set |
+| Optional LLM | Groq API (OpenAI-compatible), default model `openai/gpt-oss-20b` |
+| Hosting | Render (one web service serves both the API and the built frontend) |
 
-## 🛠 Technology Stack
+## Run it locally
 
-### Frontend
-- **React 18** with TypeScript for type safety
-- **Tailwind CSS** for modern, responsive styling
-- **Lucide React** for beautiful, consistent icons
-- **Vite** for fast development and building
+You need Node.js 22.
 
-### Backend
-- **Node.js** with Express.js framework
-- **JWT** for secure authentication
-- **bcryptjs** for password hashing
-- **CORS** for cross-origin resource sharing
-- **UUID** for unique identifier generation
-
-### Development Tools
-- **Concurrently** for running frontend and backend simultaneously
-- **Nodemon** for automatic server restarts during development
-- **ESLint** for code quality and consistency
-
-## 📦 Installation & Setup
-
-### Prerequisites
-- Node.js (v16 or higher)
-- npm or yarn package manager
-
-### Quick Start
-
-1. **Clone the repository**
-   ```bash
-   git clone <repository-url>
-   cd ecommerce-chatbot-system
-   ```
-
-2. **Install dependencies**
-   ```bash
-   npm install
-   ```
-
-3. **Start the development servers**
-   ```bash
-   npm run dev
-   ```
-
-   This command starts both the frontend (port 5173) and backend (port 3001) servers concurrently.
-
-4. **Access the application**
-   - Frontend: http://localhost:5173
-   - Backend API: http://localhost:3001
-
-### Demo Account
-- **Email**: demo@example.com
-- **Password**: password
-
-## 🏗 Architecture Overview
-
-### Project Structure
-```
-├── src/                          # Frontend source code
-│   ├── components/               # React components
-│   │   ├── ChatInterface.tsx     # Main chat interface
-│   │   ├── ProductCard.tsx       # Product display component
-│   │   ├── Login.tsx            # Authentication forms
-│   │   └── ...
-│   ├── contexts/                # React contexts
-│   │   └── AuthContext.tsx      # Authentication state management
-│   ├── services/                # API service layer
-│   │   └── api.ts              # API communication functions
-│   └── ...
-├── server/                      # Backend source code
-│   ├── data/                   # Mock data storage
-│   │   ├── products.js         # Product inventory (100+ items)
-│   │   ├── users.js           # User accounts
-│   │   └── conversations.js   # Chat history
-│   └── index.js               # Express server and API routes
-└── ...
-```
-
-### API Endpoints
-
-#### Authentication
-- `POST /api/auth/login` - User login
-- `POST /api/auth/register` - User registration
-
-#### Products
-- `GET /api/products` - Get products with filtering and pagination
-- `GET /api/products/:id` - Get specific product details
-
-#### Chat & Conversations
-- `POST /api/chat` - Send message and get bot response
-- `GET /api/conversations` - Get user's conversation history
-- `DELETE /api/conversations/:id` - Delete conversation
-
-## 🤖 Chatbot Intelligence
-
-The chatbot uses natural language processing to understand user queries and provide relevant responses:
-
-### Supported Query Types
-- **Greetings**: "Hello", "Hi", "Hey"
-- **Product Search**: "laptop", "phone", "books"
-- **Price Queries**: "cheap", "affordable", "expensive", "premium"
-- **Category Browsing**: "electronics", "clothing", "sports"
-- **Help Requests**: "help", "what can you do"
-
-### Response Features
-- **Product Recommendations**: Returns relevant products with images and details
-- **Price-based Filtering**: Suggests products within budget ranges
-- **Category-specific Results**: Tailored responses for different product categories
-- **Contextual Assistance**: Provides helpful guidance and suggestions
-
-## 🎨 Design System
-
-### Color Palette
-- **Primary**: Blue (#3B82F6) - Trust and reliability
-- **Secondary**: Emerald (#10B981) - Success and growth
-- **Accent**: Purple (#8B5CF6) - Innovation and creativity
-- **Success**: Green (#22C55E)
-- **Warning**: Amber (#F59E0B)
-- **Error**: Red (#EF4444)
-
-### Typography
-- **Headings**: 120% line height for readability
-- **Body Text**: 150% line height for comfortable reading
-- **Font Weights**: Regular (400), Medium (500), Bold (700)
-
-### Spacing System
-- **Base Unit**: 8px grid system
-- **Consistent Spacing**: 4px, 8px, 16px, 24px, 32px, 48px, 64px
-
-## 🔒 Security Features
-
-### Authentication
-- **JWT Tokens**: Secure, stateless authentication
-- **Password Hashing**: bcrypt with salt rounds for secure password storage
-- **Protected Routes**: API endpoints require valid authentication
-
-### Data Protection
-- **Input Validation**: Server-side validation for all user inputs
-- **Error Handling**: Graceful error handling without exposing sensitive information
-- **CORS Configuration**: Proper cross-origin resource sharing setup
-
-## 📱 Responsive Design
-
-### Breakpoints
-- **Mobile**: < 768px - Optimized for touch interactions
-- **Tablet**: 768px - 1024px - Balanced layout for medium screens
-- **Desktop**: > 1024px - Full-featured experience with sidebar
-
-### Mobile Optimizations
-- **Touch-friendly**: Large tap targets and gesture support
-- **Optimized Layout**: Stacked components for narrow screens
-- **Performance**: Efficient rendering for mobile devices
-
-## 🚀 Deployment
-
-### Production Build
 ```bash
-npm run build
+git clone https://github.com/ArpitMakkar12/E-Commerce-Sales-Chatbot.git
+cd E-Commerce-Sales-Chatbot
+npm install
+cp .env.example .env      # on Windows: copy .env.example .env
+npm run dev
 ```
 
-### Environment Variables
-For production deployment, set the following environment variables:
-- `JWT_SECRET`: Strong secret key for JWT token signing
-- `NODE_ENV`: Set to "production"
-- `PORT`: Server port (default: 3001)
+Open http://localhost:5173 and sign in with the demo account:
 
-### Deployment Considerations
-- **Database**: Replace mock data with a real database (PostgreSQL, MongoDB)
-- **File Storage**: Implement proper image storage (AWS S3, Cloudinary)
-- **Caching**: Add Redis for session management and caching
-- **Monitoring**: Implement logging and error tracking
-- **SSL**: Enable HTTPS for secure communication
+- Email: `demo@example.com`
+- Password: `ShopDemo#2026`
 
-## 🧪 Testing Strategy
+`npm run dev` starts the React app (port 5173) and the API (port 3001) together. With `MONGODB_URI` left empty, users and chats are kept in memory and reset when the server restarts. Paste your Atlas connection string into `.env` to keep them.
 
-### Recommended Testing Approach
-- **Unit Tests**: Test individual components and functions
-- **Integration Tests**: Test API endpoints and data flow
-- **E2E Tests**: Test complete user workflows
-- **Performance Tests**: Ensure responsive performance under load
+Other commands:
 
-### Testing Tools
-- **Frontend**: Jest, React Testing Library, Cypress
-- **Backend**: Jest, Supertest for API testing
-- **Performance**: Lighthouse, WebPageTest
+| Command | What it does |
+| --- | --- |
+| `npm test` | Runs the chatbot tests |
+| `npm run build` | Builds the frontend into `dist/` |
+| `npm start` | Runs the server; it also serves `dist/` if it exists |
+| `npm run lint` / `npm run typecheck` | Code checks |
 
-## 🔄 Future Enhancements
+## Environment variables
 
-### Planned Features
-- **Advanced Search**: Elasticsearch integration for better search
-- **Recommendation Engine**: Machine learning-based product recommendations
-- **Voice Interface**: Speech-to-text and text-to-speech capabilities
-- **Multi-language Support**: Internationalization (i18n)
-- **Payment Integration**: Stripe/PayPal integration for actual purchases
-- **Admin Dashboard**: Product management and analytics
-- **Real-time Notifications**: WebSocket-based real-time updates
+| Name | Required | Purpose |
+| --- | --- | --- |
+| `JWT_SECRET` | In production | Long random string used to sign login tokens |
+| `MONGODB_URI` | Recommended | MongoDB Atlas connection string. Empty = in-memory store |
+| `MONGODB_DB` | No | Database name (default `shopbot`) |
+| `GROQ_API_KEY` | No | Turns on LLM mode |
+| `GROQ_MODEL` | No | Groq model id (default `openai/gpt-oss-20b`) |
+| `PORT` | No | Server port (default 3001; Render sets this itself) |
+| `NODE_ENV` | No | `production` on the server |
 
-### Scalability Improvements
-- **Microservices**: Break down into smaller, focused services
-- **Database Optimization**: Implement proper indexing and query optimization
-- **CDN Integration**: Content delivery network for static assets
-- **Load Balancing**: Horizontal scaling with load balancers
+## Deploy to Render (free)
 
-## 📊 Performance Metrics
+1. **MongoDB Atlas**: create a free cluster, add a database user, allow network access from `0.0.0.0/0` (Render's free tier has no fixed IP), and copy the `mongodb+srv://...` connection string with your password filled in.
+2. **Groq (optional)**: create an API key at https://console.groq.com/keys.
+3. **Render**: New → Blueprint → pick this repository. Render reads `render.yaml`, creates the web service, generates `JWT_SECRET`, and asks you for `MONGODB_URI` and `GROQ_API_KEY` (leave the Groq one empty to use rules only).
+4. Wait for the deploy, then open `https://<your-service>.onrender.com/api/health`. It should show `"database": "mongodb"`.
 
-### Current Performance
-- **First Contentful Paint**: < 1.5s
-- **Time to Interactive**: < 3s
-- **Bundle Size**: Optimized with code splitting
-- **API Response Time**: < 200ms average
+Without the Blueprint, create a Web Service with build command `npm ci --include=dev && npm run build`, start command `npm start`, health check path `/api/health`, and the environment variables above.
 
-### Monitoring
-- **Error Tracking**: Implement Sentry or similar
-- **Performance Monitoring**: Use tools like New Relic
-- **User Analytics**: Track user interactions and conversion rates
+Free Render services sleep after 15 minutes without traffic; the first visit after that takes about a minute to wake up.
 
-## 🤝 Contributing
+## API
 
-### Development Guidelines
-1. **Code Style**: Follow ESLint configuration
-2. **Commit Messages**: Use conventional commit format
-3. **Testing**: Write tests for new features
-4. **Documentation**: Update README for significant changes
+| Method | Path | Auth | Description |
+| --- | --- | --- | --- |
+| GET | `/api/health` | – | Server, database and LLM status |
+| POST | `/api/auth/register` | – | Create an account → `{ token, user }` |
+| POST | `/api/auth/login` | – | Sign in → `{ token, user }` |
+| GET | `/api/auth/me` | ✓ | Current user (checks the token) |
+| GET | `/api/products` | – | Query: `category`, `search`, `minPrice`, `maxPrice`, `limit`, `offset` |
+| GET | `/api/products/categories` | – | Categories with item counts and price ranges |
+| GET | `/api/products/:id` | – | One product |
+| POST | `/api/chat` | ✓ | Body: `{ message, conversationId? }` → `{ conversationId, message }` |
+| GET | `/api/conversations` | ✓ | Your conversations (summaries, newest first) |
+| GET | `/api/conversations/:id` | ✓ | One conversation with all messages |
+| DELETE | `/api/conversations/:id` | ✓ | Delete a conversation |
 
-### Pull Request Process
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes with tests
-4. Submit a pull request with detailed description
+Auth = send `Authorization: Bearer <token>`. Login/register are limited to 30 attempts per 15 minutes and chat to 30 messages per minute per IP.
 
-## 📄 License
+## Project structure
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+```
+server/
+  index.js              Express app: API routes + serves the built frontend
+  config.js             Reads environment variables
+  db/                   Storage: MongoDB store, in-memory store, demo user setup
+  middleware/auth.js    Creates and checks login tokens
+  routes/               auth, products, chat + conversations
+  bot/
+    text.js             Word cleanup, plurals, synonyms
+    search.js           Product search and ranking
+    nlu.js              Understands a message (intent, category, budget, follow-ups)
+    reply.js            Builds the rule-based answer
+    llm.js              Optional Groq LLM layer
+    index.js            Ties it together, falls back to rules if the LLM fails
+    bot.test.js         Tests (npm test)
+  data/products.js      The 100-product catalog
+src/
+  services/api.ts       All calls to the backend
+  contexts/AuthContext.tsx  Login state and session checks
+  components/           Chat screen, product card, history, login, register
+  types.ts              Shared TypeScript types
+public/favicon.svg      Browser tab icon
+render.yaml             Render deployment settings
+```
 
-## 🙏 Acknowledgments
+## Known limits
 
-- **Design Inspiration**: Modern e-commerce platforms and chat interfaces
-- **Icons**: Lucide React icon library
-- **Images**: Pexels for product placeholder images
-- **Typography**: System fonts for optimal performance
+- The catalog is a fixed list in `server/data/products.js`; product photos are shared Pexels placeholder images.
+- "Add to cart" shows a confirmation only; there is no checkout.
+- Saved (heart) items are remembered per browser, not per account.
 
----
+## License
 
-**Built with ❤️ for the future of e-commerce**
-
-This system demonstrates modern web development practices, clean architecture, and user-centered design principles. It serves as a foundation for building production-ready e-commerce chatbot solutions.
+MIT

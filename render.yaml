@@ -5,6 +5,7 @@ services:
     name: ecommerce-sales-chatbot
     runtime: node
     plan: free
+    region: singapore
     buildCommand: npm ci --include=dev && npm run build
     startCommand: npm start
     healthCheckPath: /api/health
