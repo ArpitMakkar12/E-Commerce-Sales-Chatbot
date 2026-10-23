@@ -2,8 +2,12 @@
 // Checks that the rule-based bot understands common shopping questions.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
+import { config } from '../config.js';
 import { generateReply } from './index.js';
 import { getProductById } from './search.js';
+
+// Test the rule-based bot only: no network calls, no Groq quota used, same result every run.
+config.llm.apiKey = '';
 
 async function ask(message, context = {}) {
   const reply = await generateReply({ message, context });
