@@ -1,0 +1,23 @@
+# Render Blueprint: one free web service that builds the React app
+# and runs the Express server, which serves both the API and the frontend.
+services:
+  - type: web
+    name: ecommerce-sales-chatbot
+    runtime: node
+    plan: free
+    buildCommand: npm ci --include=dev && npm run build
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: JWT_SECRET
+        generateValue: true
+      - key: MONGODB_URI
+        sync: false
+      - key: MONGODB_DB
+        value: shopbot
+      - key: GROQ_API_KEY
+        sync: false
+      - key: GROQ_MODEL
+        value: openai/gpt-oss-20b
