@@ -319,7 +319,7 @@ export const products = [
     image: 'https://images.pexels.com/photos/1029757/pexels-photo-1029757.jpeg?auto=compress&cs=tinysrgb&w=500',
     rating: 4.7,
     reviews: 1876,
-    inStock: true,
+    inStock: false,
     features: ['4K resolution', '144Hz refresh', 'HDR support', 'Gaming optimized']
   },
   {
@@ -467,7 +467,7 @@ export const products = [
     image: 'https://images.pexels.com/photos/1598507/pexels-photo-1598507.jpeg?auto=compress&cs=tinysrgb&w=500',
     rating: 4.7,
     reviews: 1287,
-    inStock: true,
+    inStock: false,
     features: ['Insulated design', 'Water resistant', 'Multiple pockets', 'Adjustable hood']
   },
   {
@@ -517,7 +517,7 @@ export const products = [
     image: 'https://images.pexels.com/photos/1571460/pexels-photo-1571460.jpeg?auto=compress&cs=tinysrgb&w=500',
     rating: 4.5,
     reviews: 2847,
-    inStock: true,
+    inStock: false,
     features: ['Smart mapping', 'App control', 'Auto-charging', 'HEPA filter']
   },
   {
@@ -890,7 +890,7 @@ export const products = [
     image: 'https://images.pexels.com/photos/3822864/pexels-photo-3822864.jpeg?auto=compress&cs=tinysrgb&w=500',
     rating: 4.4,
     reviews: 621,
-    inStock: true,
+    inStock: false,
     features: ['Complete set', 'Golf bag included', 'Beginner friendly', 'Quality construction']
   },
   {
