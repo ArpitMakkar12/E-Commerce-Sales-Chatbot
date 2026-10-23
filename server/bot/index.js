@@ -16,6 +16,9 @@ export async function generateReply({ message, context = {}, history = [] }) {
 
   try {
     const llm = await llmReply({ message, history, candidates: rules.candidates, hint: describeParse(parsed) });
+    // Safety net: if our search found products but the LLM picked none, show the rules answer
+    // so the customer always gets product cards.
+    if (!llm.productIds.length && rules.productIds.length) return rulesResult;
     return {
       text: llm.text,
       productIds: llm.productIds,

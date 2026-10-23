@@ -34,7 +34,7 @@ const STOPWORDS = new Set(`
   bargain expensive pricey pricier priciest premium luxury luxurious high highest end fancy best top rated
   rating ratings quality recommended popular trending bestselling bestseller stock star stars hi hello hey
   thanks thank thx please someone them him her people help assist use using gear equipment supplies
-  essentials accessories
+  essentials accessories lover lovers fan fans enthusiast enthusiasts
 `.split(/\s+/).filter(Boolean));
 
 // Words that mean "this is a gift": we show varied, well-rated items.
