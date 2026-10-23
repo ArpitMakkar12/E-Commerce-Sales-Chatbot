@@ -1,107 +1,72 @@
-import React from 'react';
 import { MessageSquare, Trash2, Clock } from 'lucide-react';
-
-interface Message {
-  id: string;
-  role: 'user' | 'assistant';
-  content: string;
-  timestamp: string;
-}
-
-interface Conversation {
-  id: string;
-  messages: Message[];
-  createdAt: string;
-  updatedAt: string;
-}
+import type { ConversationSummary } from '../types';
 
 interface ConversationHistoryProps {
-  conversations: Conversation[];
+  conversations: ConversationSummary[];
   currentConversationId: string | null;
-  onLoadConversation: (conversation: Conversation) => void;
-  onDeleteConversation: (id: string) => void;
+  onSelect: (id: string) => void;
+  onDelete: (id: string) => void;
 }
 
-export function ConversationHistory({
-  conversations,
-  currentConversationId,
-  onLoadConversation,
-  onDeleteConversation
-}: ConversationHistoryProps) {
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    const now = new Date();
-    const diffTime = Math.abs(now.getTime() - date.getTime());
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    
-    if (diffDays === 1) return 'Today';
-    if (diffDays === 2) return 'Yesterday';
-    if (diffDays <= 7) return `${diffDays - 1} days ago`;
-    
-    return date.toLocaleDateString();
-  };
+// "Today, 10:42", "Yesterday", "3 days ago", or a date. Compares calendar days, not 24h blocks.
+function formatDate(iso: string) {
+  const date = new Date(iso);
+  const startOfDay = (d: Date) => new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime();
+  const days = Math.round((startOfDay(new Date()) - startOfDay(date)) / 86_400_000);
+  if (days <= 0) return `Today, ${date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+  if (days === 1) return 'Yesterday';
+  if (days < 7) return `${days} days ago`;
+  return date.toLocaleDateString();
+}
 
-  const getPreviewText = (messages: Message[]) => {
-    const userMessages = messages.filter(m => m.role === 'user');
-    if (userMessages.length === 0) return 'New conversation';
-    
-    const firstUserMessage = userMessages[0].content;
-    return firstUserMessage.length > 50 
-      ? firstUserMessage.substring(0, 50) + '...'
-      : firstUserMessage;
-  };
-
+export function ConversationHistory({ conversations, currentConversationId, onSelect, onDelete }: ConversationHistoryProps) {
   if (conversations.length === 0) {
     return (
-      <div className="text-center py-8">
-        <MessageSquare className="h-12 w-12 text-gray-300 mx-auto mb-3" />
-        <p className="text-gray-500 text-sm">No conversations yet</p>
-        <p className="text-gray-400 text-xs">Start chatting to see your history</p>
+      <div className="py-8 text-center">
+        <MessageSquare className="w-12 h-12 mx-auto mb-3 text-gray-300" />
+        <p className="text-sm text-gray-500">No conversations yet</p>
+        <p className="text-xs text-gray-400">Start chatting to see your history</p>
       </div>
     );
   }
 
   return (
-    <div className="space-y-3">
-      {conversations.map((conversation) => (
-        <div
-          key={conversation.id}
-          className={`relative group p-3 rounded-lg border transition-all duration-200 cursor-pointer ${
-            currentConversationId === conversation.id
-              ? 'bg-blue-50 border-blue-200'
-              : 'bg-gray-50 border-gray-200 hover:bg-gray-100'
-          }`}
-        >
-          <div onClick={() => onLoadConversation(conversation)}>
-            <div className="flex items-start justify-between mb-2">
-              <div className="flex items-center space-x-2">
-                <MessageSquare className="h-4 w-4 text-gray-600" />
-                <span className="text-sm font-medium text-gray-900">
-                  {conversation.messages.length} messages
+    <ul className="space-y-3">
+      {conversations.map((conversation) => {
+        const isCurrent = currentConversationId === conversation.id;
+        return (
+          <li
+            key={conversation.id}
+            className={`relative group rounded-lg border transition-all duration-200 ${
+              isCurrent ? 'bg-blue-50 border-blue-200' : 'bg-gray-50 border-gray-200 hover:bg-gray-100'
+            }`}
+          >
+            <button type="button" onClick={() => onSelect(conversation.id)} className="w-full p-3 pr-10 text-left">
+              <p className="mb-1 text-sm font-medium text-gray-900 line-clamp-2">{conversation.title}</p>
+              <div className="flex items-center space-x-3 text-xs text-gray-500">
+                <span className="flex items-center space-x-1">
+                  <MessageSquare className="w-3 h-3" />
+                  <span>{conversation.messageCount} messages</span>
+                </span>
+                <span className="flex items-center space-x-1">
+                  <Clock className="w-3 h-3" />
+                  <span>{formatDate(conversation.updatedAt)}</span>
                 </span>
               </div>
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onDeleteConversation(conversation.id);
-                }}
-                className="opacity-0 group-hover:opacity-100 p-1 text-gray-400 hover:text-red-500 transition-all duration-200"
-              >
-                <Trash2 className="h-3 w-3" />
-              </button>
-            </div>
-            
-            <p className="text-xs text-gray-600 mb-2 line-clamp-2">
-              {getPreviewText(conversation.messages)}
-            </p>
-            
-            <div className="flex items-center space-x-1 text-xs text-gray-500">
-              <Clock className="h-3 w-3" />
-              <span>{formatDate(conversation.updatedAt)}</span>
-            </div>
-          </div>
-        </div>
-      ))}
-    </div>
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                if (window.confirm('Delete this conversation?')) onDelete(conversation.id);
+              }}
+              aria-label={`Delete conversation: ${conversation.title}`}
+              className="absolute top-2 right-2 p-1.5 rounded text-gray-400 hover:text-red-500 hover:bg-red-50 transition-all duration-200 sm:opacity-0 sm:group-hover:opacity-100 focus:opacity-100"
+            >
+              <Trash2 className="w-4 h-4" />
+            </button>
+          </li>
+        );
+      })}
+    </ul>
   );
 }
